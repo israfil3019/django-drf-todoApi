@@ -11,6 +11,7 @@ from django.http.response import HttpResponse
 # from rest_framework.mixins import ListModelMixin, CreateModelMixin
 
 from rest_framework import generics
+from .pagination import SmallPagination, LargePagination
 
 
 
@@ -25,6 +26,8 @@ class TodoListCreateAPIView(generics.ListCreateAPIView): # myenv/Lib/rest-framew
     
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
+    # pagination_class = SmallPagination
+
 
     
 class TodoDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
