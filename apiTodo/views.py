@@ -12,6 +12,8 @@ from django.http.response import HttpResponse
 
 from rest_framework import generics
 from .pagination import SmallPagination, LargePagination
+from rest_framework.filters import SearchFilter, OrderingFilter
+
 
 
 
@@ -24,11 +26,27 @@ def home(request):
 
 class TodoListCreateAPIView(generics.ListCreateAPIView): # myenv/Lib/rest-framework/generics.py
     
-    queryset = Todo.objects.all()
+    
+    queryset = Todo.objects.all().order_by('-id')
     serializer_class = TodoSerializer
     # pagination_class = SmallPagination
-
-
+    filter_backends = [SearchFilter,OrderingFilter]
+    filterset_fields = ['done','priority']
+    search_fields = ['task','priority' ]
+    ordering_fields = ['finish_date', ]
+    
+    
+    
+    # def get_queryset(self):
+    #     """
+    #     Optionally restricts the returned purchases to a given user,
+    #     by filtering against a `username` query parameter in the URL.
+    #     """
+    #     queryset = Todo.objects.all()
+    #     done = self.request.query_params.get('done')
+    #     if done is not None:
+    #         queryset = queryset.filter(done=done)
+    #     return queryset
     
 class TodoDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     
