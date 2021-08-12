@@ -15,6 +15,8 @@ class Todo(models.Model):
     done = models.BooleanField(default=False)
     createdDate = models.DateTimeField(auto_now_add=True)
     updatedDate = models.DateTimeField(auto_now=True)
+    finish_date = models.DateTimeField()
+
 
     def __str__(self):
         return self.task

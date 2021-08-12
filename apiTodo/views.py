@@ -6,7 +6,8 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, GenericAPIView
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
 
 
 
@@ -16,19 +17,32 @@ def home(request):
     return HttpResponse("Home Page")
 
 
-class TodoListCreateAPIView(APIView):
+class TodoListCreateAPIView(ListModelMixin, CreateModelMixin, GenericAPIView):
     
-    def get(self, request):
-        queryset = Todo.objects.all()
-        serializer = TodoSerializer(queryset, many=True)
-        return Response(serializer.data)
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
     
-    def post(self, request):
-        serializer = TodoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self,request,*args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request,  *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+
+# class TodoListCreateAPIView(APIView):
+    
+#     def get(self, request):
+#         queryset = Todo.objects.all()
+#         serializer = TodoSerializer(queryset, many=True)
+#         return Response(serializer.data)
+    
+#     def post(self, request):
+#         serializer = TodoSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TodoDetailAPIView(APIView):
     
@@ -40,7 +54,6 @@ class TodoDetailAPIView(APIView):
         todo = self.get_object(pk=pk)
         serializer = TodoSerializer(todo)
         return Response(serializer.data)
-    
     
     def put(self, request, pk):
         todo = self.get_object(pk=pk)
